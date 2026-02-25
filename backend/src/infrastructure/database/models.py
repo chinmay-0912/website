@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
+import uuid
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, UUID
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
@@ -37,7 +38,7 @@ class ProjectModel(Base):
 class UserModel(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String(255), nullable=False)
     email = Column(String(255), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
