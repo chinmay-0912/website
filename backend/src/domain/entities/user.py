@@ -26,10 +26,12 @@ class User:
 
     @classmethod
     def from_orm(cls, id, email: Email, hashed_password: str, created_at):
-        user = cls(email=email, password_hash=hashed_password)
-        user._id = id
-        user.created_at = created_at
-        return user
+        return cls(
+            _id=id,
+            email=email,
+            password_hash=hashed_password,
+            created_at=created_at
+        )
 
     def __eq__(self, other):
         if not isinstance(other, User):

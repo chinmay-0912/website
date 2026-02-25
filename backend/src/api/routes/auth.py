@@ -40,8 +40,10 @@ def login(
     response: Response,
     login_use_case: LoginUser = Depends(get_login_use_case),
 ):
+    print(f"DEBUG: Login attempt for email: {email} and password: {password}")
     try:
         token = login_use_case.execute(email=email, password=password)
+        print(f"DEBUG: Login successful, generated token: {token}")
 
         response.set_cookie(
             key="access_token",
@@ -51,10 +53,11 @@ def login(
             samesite="lax",
             max_age=60 * 60 * 24 * 7,
         )
-
+        print(f"DEBUG: Set cookie successful, generated cookie")
         return {"message": "Login successful"}
 
     except Exception:
+        print(f"LOGIN ERROR: {Exception}")
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
 @router.get("/me")

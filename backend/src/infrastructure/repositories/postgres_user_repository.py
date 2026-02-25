@@ -15,11 +15,13 @@ class PostgresUserRepository(UserRepository):
         Retrieves a user by email synchronously.
         Returns None if not found, allowing the 'User already exists' check to pass.
         """
+        print(f"DEBUG: Querying database for user with email: {email.value}")  # Debug log
         db_user = (
             self.db.query(UserModel)
             .filter(UserModel.email == email.value)
             .first()
         )
+        print(f"DEBUG: Database query result for email {email.value}: {db_user.email} \nid: {db_user.id} \npassword:{db_user.password_hash}")  # Debug log
 
         if not db_user:
             return None
@@ -28,7 +30,7 @@ class PostgresUserRepository(UserRepository):
         return User.from_orm(
             id=db_user.id,
             email=Email(db_user.email),
-            password_hash=db_user.password_hash,
+            hashed_password=db_user.password_hash,
             created_at=db_user.created_at
         )
 
