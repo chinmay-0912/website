@@ -1,17 +1,17 @@
 from dataclasses import dataclass
 from datetime import datetime
-
+from uuid import UUID
 
 @dataclass
 class BlogPost:
     id: int | None
     title: str
     content: str
-    author_id: int
+    author_id: UUID
     created_at: datetime
 
     @classmethod
-    def create(cls, title: str, content: str, author_id: int):
+    def create(cls, title: str, content: str, author_id: UUID):
         return cls(
             id=None,
             title=title,

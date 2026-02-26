@@ -21,9 +21,7 @@ class LoginUser:
     def execute(self, email: str, password: str) -> str:
         # 1️⃣ Find user by email
         email_vo = Email(email)
-        print(f"DEBUG: Looking up user by email: {email}")  # Debug log
         user = self.user_repository.get_by_email(email_vo)
-        print(f"DEBUG: User found for email {email}: {user}")  # Debug log
 
         if not user:
             raise InvalidCredentialsException("Invalid email or password")

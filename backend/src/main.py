@@ -15,13 +15,12 @@ def create_application() -> FastAPI:
         version="1.0.0",
     )
 
-    # CORS (for frontend connection later)
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # tighten in production
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_origins=["http://localhost:3000"],  # No trailing slash!
+        allow_credentials=True,  # Required for cookies
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["Content-Type", "Set-Cookie", "Authorization", "Access-Control-Allow-Origin"],
     )
 
     # Health Check

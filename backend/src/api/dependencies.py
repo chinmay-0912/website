@@ -3,6 +3,7 @@ from backend.src.infrastructure.security.jwt_service import JWTService
 from backend.src.infrastructure.database.session import get_db
 from sqlalchemy.orm import Session
 from backend.src.domain.repositories.user_repository import UserRepository
+from backend.src.infrastructure.repositories.postgres_user_repository import PostgresUserRepository
 
 def get_current_user(
     request: Request,
@@ -19,7 +20,7 @@ def get_current_user(
         payload = jwt_service.verify_token(token)
         user_id = payload["sub"]
 
-        user_repo = UserRepository(db)
+        user_repo = PostgresUserRepository(db)
         user = user_repo.get_by_id(user_id)
 
         if not user:

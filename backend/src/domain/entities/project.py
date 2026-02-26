@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-
+from uuid import UUID
 
 @dataclass
 class Project:
@@ -8,11 +8,11 @@ class Project:
     title: str
     description: str
     link: str
-    owner_id: int
+    owner_id: UUID
     created_at: datetime
 
     @classmethod
-    def create(cls, title: str, description: str, link: str, owner_id: int):
+    def create(cls, title: str, description: str, link: str, owner_id: UUID):
         return cls(
             id=None,
             title=title,

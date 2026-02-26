@@ -3,6 +3,7 @@ from backend.src.domain.repositories.user_repository import UserRepository
 from backend.src.domain.entities.user import User
 from backend.src.domain.value_objects.email import Email
 from backend.src.infrastructure.database.models import UserModel
+from uuid import UUID
 
 
 class PostgresUserRepository(UserRepository):
@@ -15,13 +16,11 @@ class PostgresUserRepository(UserRepository):
         Retrieves a user by email synchronously.
         Returns None if not found, allowing the 'User already exists' check to pass.
         """
-        print(f"DEBUG: Querying database for user with email: {email.value}")  # Debug log
         db_user = (
             self.db.query(UserModel)
             .filter(UserModel.email == email.value)
             .first()
         )
-        print(f"DEBUG: Database query result for email {email.value}: {db_user.email} \nid: {db_user.id} \npassword:{db_user.password_hash}")  # Debug log
 
         if not db_user:
             return None
@@ -30,6 +29,7 @@ class PostgresUserRepository(UserRepository):
         return User.from_orm(
             id=db_user.id,
             email=Email(db_user.email),
+            name=db_user.name,
             hashed_password=db_user.password_hash,
             created_at=db_user.created_at
         )
@@ -48,3 +48,16 @@ class PostgresUserRepository(UserRepository):
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)
+
+    def get_by_id(self, user_id: UUID) -> User | None:
+        db_user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not db_user:
+            return None
+
+        return User.from_orm(
+            id=db_user.id,
+            email=Email(db_user.email),
+            name=db_user.name,
+            hashed_password=db_user.password_hash,
+            created_at=db_user.created_at
+        )

@@ -12,7 +12,7 @@ class BlogModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), nullable=False)
     content = Column(Text, nullable=False)
-    author_id = Column(Integer, nullable=False)
+    author_id = Column(UUID(as_uuid=True), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
@@ -32,7 +32,7 @@ class ProjectModel(Base):
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=False)
     link = Column(String(500), nullable=True)
-    owner_id = Column(Integer, nullable=False)
+    owner_id = Column(UUID(as_uuid=True), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class UserModel(Base):

@@ -8,7 +8,7 @@ class RegisterUser:
         self.user_repo = user_repo
         self.password_hasher = password_hasher
 
-    def execute(self, email: str, password: str):
+    def execute(self, email: str, name: str, password: str):
         email_vo = Email(email)
 
         existing_user = self.user_repo.get_by_email(email_vo)
@@ -19,6 +19,7 @@ class RegisterUser:
 
         user = User.create(
             email=email_vo,
+            name=name,
             password_hash=hashed_password
         )
 

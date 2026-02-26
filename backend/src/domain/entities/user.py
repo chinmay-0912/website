@@ -8,6 +8,7 @@ from backend.src.domain.value_objects.email import Email
 class User:
     _id: UUID = field(repr=False)
     email: Email
+    name: str
     password_hash: str
     created_at: datetime
 
@@ -16,19 +17,21 @@ class User:
         return self._id
 
     @classmethod
-    def create(cls, email: Email, password_hash: str) -> "User":
+    def create(cls, email: Email, name: str ,password_hash: str) -> "User":
         return cls(
             _id=uuid4(),
             email=email,
+            name=name,
             password_hash=password_hash,
             created_at=datetime.now(tz=timezone.utc),
         )
 
     @classmethod
-    def from_orm(cls, id, email: Email, hashed_password: str, created_at):
+    def from_orm(cls, id, email: Email, name: str, hashed_password: str, created_at):
         return cls(
             _id=id,
             email=email,
+            name=name,
             password_hash=hashed_password,
             created_at=created_at
         )
