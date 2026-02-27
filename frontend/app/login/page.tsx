@@ -4,12 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "../../lib/api";
+import { useAuth } from "@/context/AuthContext"; // ⭐ added
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const router = useRouter();
+  const { refreshUser } = useAuth(); // ⭐ added
 
-  // 1. Add state for inputs and feedback
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,52 +20,46 @@ export default function AuthPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 2. Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-  try {
-    const { email, password, name } = formData;
+    try {
+      const { email, password, name } = formData;
 
-    if (isLogin) {
-      // LOGIN: Query String Params (e.g., /auth/login?email=...)
-      const endpoint = `/auth/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+      if (isLogin) {
+        const endpoint = `/auth/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
 
-      await apiFetch(endpoint, {
-        method: "POST"
-        // No body here
-      });
+        await apiFetch(endpoint, { method: "POST" });
 
-      router.push("/dashboard");
-    } else {
-      // REGISTER: JSON Body (e.g., /auth/register with payload)
-      await apiFetch("/auth/register", {
-        method: "POST",
-        body: JSON.stringify({
-          email: email,
-          password: password,
-          name: name || "New User"
-        }),
-      });
+        // ⭐ critical sync with AuthContext
+        await refreshUser();
 
-      // After successful registration, switch to login view
-      setIsLogin(true);
-      alert("Registration successful! Please login.");
+        router.push("/dashboard");
+      } else {
+        await apiFetch("/auth/register", {
+          method: "POST",
+          body: JSON.stringify({
+            email: email,
+            password: password,
+            name: name || "New User",
+          }),
+        });
+
+        setIsLogin(true);
+        alert("Registration successful! Please login.");
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-  } catch (err: any) {
-    setError(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <section className="min-h-screen flex items-center justify-center px-6 text-white">
       <div className="w-full max-w-md border border-gray-700 rounded-xl p-10">
-
-        {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-semibold mb-2">
             {isLogin ? "Login" : "Create Account"}
@@ -75,9 +70,7 @@ export default function AuthPage() {
           {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
         </div>
 
-        {/* Form - Added onSubmit */}
         <form className="space-y-6" onSubmit={handleSubmit}>
-
           {!isLogin && (
             <div>
               <label className="block text-sm text-gray-400 mb-2">Full Name</label>
@@ -85,7 +78,7 @@ export default function AuthPage() {
                 type="text"
                 required
                 value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full bg-transparent border border-gray-600 rounded-md px-4 py-3 focus:outline-none focus:border-white transition"
               />
             </div>
@@ -97,7 +90,7 @@ export default function AuthPage() {
               type="email"
               required
               value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="w-full bg-transparent border border-gray-600 rounded-md px-4 py-3 focus:outline-none focus:border-white transition"
             />
           </div>
@@ -108,7 +101,7 @@ export default function AuthPage() {
               type="password"
               required
               value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               className="w-full bg-transparent border border-gray-600 rounded-md px-4 py-3 focus:outline-none focus:border-white transition"
             />
           </div>
@@ -120,7 +113,7 @@ export default function AuthPage() {
                 type="password"
                 required
                 value={formData.confirmPassword}
-                onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 className="w-full bg-transparent border border-gray-600 rounded-md px-4 py-3 focus:outline-none focus:border-white transition"
               />
             </div>
@@ -129,10 +122,10 @@ export default function AuthPage() {
           {isLogin && (
             <div className="text-right">
               <Link
-                  href="/forgot-password"
-                  className="text-sm text-gray-400 hover:text-white transition"
-                >
-                  Forgot password?
+                href="/forgot-password"
+                className="text-sm text-gray-400 hover:text-white transition"
+              >
+                Forgot password?
               </Link>
             </div>
           )}
@@ -146,19 +139,30 @@ export default function AuthPage() {
           </button>
         </form>
 
-        {/* Toggle */}
         <div className="mt-8 text-center text-sm text-gray-400">
           {isLogin ? (
             <>
               Don’t have an account?{" "}
-              <button onClick={() => { setIsLogin(false); setError(""); }} className="text-white hover:underline">
+              <button
+                onClick={() => {
+                  setIsLogin(false);
+                  setError("");
+                }}
+                className="text-white hover:underline"
+              >
                 Sign up
               </button>
             </>
           ) : (
             <>
               Already registered?{" "}
-              <button onClick={() => { setIsLogin(true); setError(""); }} className="text-white hover:underline">
+              <button
+                onClick={() => {
+                  setIsLogin(true);
+                  setError("");
+                }}
+                className="text-white hover:underline"
+              >
                 Sign in
               </button>
             </>

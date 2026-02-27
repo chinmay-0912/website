@@ -39,3 +39,8 @@ start server
 ### Step 4:
 - `npm run dev` to start the frontend development server. This command will run the development server for your frontend application, allowing you to view and interact with your website in a web browser. Make sure you have Node.js and npm installed on your machine before executing this command.
 
+### Step 5:
+- `taskkill /F /IM python.exe /T` nuclear option to forcefully terminate all Python processes. This command is useful when you want to stop the FastAPI server or any other Python processes that may be running in the background. Use this command with caution, as it will terminate all Python processes without prompting for confirmation.
+- `netstat -ano | findstr :8000` to find the process ID (PID) of any process using port 8000. This command will display a list of all processes that are currently using port 8000, along with their corresponding PIDs. You can use this information to identify which process is running on that port.
+- `taskkill /PID {PID} /F` to terminate a specific process using its
+- 

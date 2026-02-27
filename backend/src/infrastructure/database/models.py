@@ -25,6 +25,7 @@ class ContactModel(Base):
     message = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+
 class ProjectModel(Base):
     __tablename__ = "projects"
 
@@ -35,6 +36,7 @@ class ProjectModel(Base):
     owner_id = Column(UUID(as_uuid=True), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+
 class UserModel(Base):
     __tablename__ = "users"
 
@@ -43,3 +45,5 @@ class UserModel(Base):
     email = Column(String(255), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+    reset_token = Column(String(255), nullable=True, index=True)
+    reset_token_expiry = Column(DateTime, nullable=True)

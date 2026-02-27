@@ -17,11 +17,21 @@ def create_application() -> FastAPI:
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000"],  # No trailing slash!
-        allow_credentials=True,  # Required for cookies
-        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allow_headers=["Content-Type", "Set-Cookie", "Authorization", "Access-Control-Allow-Origin"],
+        allow_origins=[
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "http://[::1]:3000"  # IPv6 support for Chrome
+        ],
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],  # Explicit list
+        allow_headers=[
+            "Content-Type",
+            "Set-Cookie",
+            "Authorization",
+            "Accept",
+        ],
     )
+
 
     # Health Check
     @app.get("/health", tags=["Health"])

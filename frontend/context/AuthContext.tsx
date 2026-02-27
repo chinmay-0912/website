@@ -13,6 +13,7 @@ type AuthContextType = {
   user: User | null;
   loading: boolean;
   refreshUser: () => Promise<void>;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -23,7 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function fetchUser() {
     try {
-      const data = await apiFetch<User>("/me");
+      const data = await apiFetch<User>("/auth/me");
       setUser(data);
     } catch {
       setUser(null);
@@ -37,12 +38,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await fetchUser();
   }
 
+  async function logout() {
+    try {
+      await apiFetch("/auth/logout", { method: "POST" });
+    } catch {}
+
+    setUser(null);
+    setLoading(false); // ⭐ important
+  }
+
   useEffect(() => {
-    fetchUser();
+    fetchUser(); // ⭐ initial load only
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, refreshUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

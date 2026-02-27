@@ -75,3 +75,37 @@ class InvalidCredentialsException(DomainError):
 
     def __init__(self, message: str = "Invalid email or password"):
         super().__init__(message)
+
+
+class PasswordResetTokenExpiredError(DomainError):
+    """
+    Raised when a password reset token has expired.
+    """
+
+    def __init__(self, message: str = "Password reset token has expired"):
+        super().__init__(message)
+
+class InvalidPasswordResetTokenError(DomainError):
+    """
+    Raised when a password reset token is invalid (e.g. malformed, signature mismatch).
+    """
+
+    def __init__(self, message: str = "Invalid password reset token"):
+        super().__init__(message)
+
+class PasswordResetFailedError(DomainError):
+    """
+    Raised when password reset process fails due to invalid token or expired token.
+    """
+
+    def __init__(self, message: str = "Password reset failed due to invalid or expired token"):
+        super().__init__(message)
+
+class UserNotFoundException:
+    """
+    Raised when a user is not found in the repository.
+    """
+
+    def __init__(self, message: str = "User not found"):
+        self.message = message
+        super().__init__(message)
